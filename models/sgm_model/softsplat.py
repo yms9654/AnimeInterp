@@ -231,7 +231,7 @@ def cupy_kernel(strFunction, objVariables):
 	return strKernel
 # end
 
-@cupy.util.memoize(for_each_device=True)
+@cupy.memoize(for_each_device=True)
 def cupy_launch(strFunction, strKernel):
 	return cupy.cuda.compile_with_cache(strKernel).get_function(strFunction)
 # end
@@ -250,6 +250,8 @@ class _FunctionSoftsplat(torch.autograd.Function):
 		assert(intInputWidth == intFlowWidth)
 
 		assert(input.is_contiguous() == True)
+		if not flow.is_contiguous():
+			flow = flow.contiguous()
 		assert(flow.is_contiguous() == True)
 
 		output = input.new_zeros([ intSamples, intInputDepth, intInputHeight, intInputWidth ])
